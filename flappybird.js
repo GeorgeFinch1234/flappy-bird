@@ -4,15 +4,20 @@ const ctx = canvas.getContext("2d");
 
 const bgImg = new Image;
 const birdImg = new Image;
-let gameover = false;
 const pipeTopImg = new Image;
-pipeTopImg.src = "./assets/toppipe.png"
 const PipeBottomImg = new Image;
+
+
+pipeTopImg.src = "./assets/toppipe.png"
 PipeBottomImg.src = "./assets/bottompipe.png"
+bgImg.src = "./assets/flappybirdbg.png"
+birdImg.src = "./assets/flappybird2.png"
 
 let PipeXpositon = 200;
 let score = 0;
 let birdYPositon = 320;
+let gameover = false;
+let raf;
 
 
 
@@ -24,39 +29,39 @@ let bird = {
     width: 34,
     height: 24
 }
-class pipe{
-    constructor(){
-        
-   this.x = 200;
-   this.width= 64;
-   this.yPositonLower= 400;
-   this.YPositonHigher= -300;
-   this.height= 512;
-   this.passed= false;
-   this.xIntialPostion;
-}
-}
-const pipes = [new pipe(), new pipe(), new pipe( )]  
+class pipe {
+    constructor() {
 
+        this.x = 200;
+        this.width = 64;
+        this.yPositonLower = 400;
+        this.YPositonHigher = -300;
+        this.height = 512;
+        this.passed = false;
+        this.xIntialPostion;
+    }
+}
+const pipes = [new pipe(), new pipe(), new pipe()]
+//so they don't all start at same time.
 pipes[0].xIntialPostion = 200;
-pipes[1].xIntialPostion = 350; 
-pipes[2].xIntialPostion = 500; 
+pipes[1].xIntialPostion = 350;
+pipes[2].xIntialPostion = 500;
 pipes[0].x = 200;
-pipes[1].x = 350; 
+pipes[1].x = 350;
 pipes[2].x = 500;
 
 
 
- function pipesDraw() {
-    //so they don't all start at same time.
+function pipesDraw() {
     
-    pipes.forEach(p=>{
-        
+
+    pipes.forEach(p => {
+
         ctx.drawImage(pipeTopImg, p.x, p.YPositonHigher, p.width, p.height);
         ctx.drawImage(PipeBottomImg, p.x, p.yPositonLower, p.width, p.height);
-       
+
     })
-  
+
 
 
 }
@@ -64,33 +69,24 @@ function birdDraw() {
     ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height)
 
 }
-function gameStart() {
-    bird.x = 45;
-    bird.y = 320;
-    bird.width = 34;
-    bird.height = 24;
-
-}
 
 addEventListener("keydown", () => {
     if (gameover) {
-        gameover = false; 
+        gameover = false;
+        // recenter it
         bird.y = 320;
         let random = Math.random() * (640 - 212);
-        
-        pipes.forEach(x=> {
-            x.x = x.xIntialPostion; 
-            x.YPositonHigher  = random - x.height;
+
+        pipes.forEach(x => {
+            x.x = x.xIntialPostion;
+            x.YPositonHigher = random - x.height;
             x.yPositonLower = random + 188;
             x.passed = false;
         })
-       
+
         score = 0;
 
-
-
-        window.requestAnimationFrame(draw)
-
+       raf= window.requestAnimationFrame(draw)
 
     }
     //moves bird up
@@ -98,13 +94,13 @@ addEventListener("keydown", () => {
 });
 
 function detectColision(a, b) {
-    //so if in front or behind it
+    
 
     //so knows when in between the pipes
     if (a.x < b.x + b.width && a.x + a.width > b.x) {
 
 
-        // so if in position to hit it, now see if in gap or not.
+        // tells if hit it or not
         return a.y < b.yPositonLower - 188 || a.y > b.yPositonLower;
         //188 = gap
 
@@ -117,31 +113,23 @@ function detectColision(a, b) {
 
 
 }
-
-function PointerEvent(a,b){
-    if (a.x > b.x + b.width && !b.passed) {
-        b.passed = true
+//to determeine if they passed and if they should get a point
+function PointerEvent(bird, pipe) {
+    if (bird.x > pipe.x + bird.width && !pipe.passed) {
+        pipe.passed = true
         score = score + 1;
-    } 
+    }
 
 }
 function draw() {
-  bgImg.src = "./assets/flappybirdbg.png"
-    birdImg.src = "./assets/flappybird2.png"
+ 
+    pipes.forEach(p => {
+        PointerEvent(bird, p);
+        if (detectColision(bird, p)) {
+            gameover = true;
+        }
+    })
 
-   
-
-
-   
-
-
-   pipes.forEach(x=>{
-    PointerEvent(bird,x);
-    if (detectColision(bird, x)) {
-        gameover = true;
-    }
-})
-    
 
     ctx.clearRect(0, 0, 640, 360); // clear canvas
 
@@ -153,40 +141,41 @@ function draw() {
 
         bird.y = bird.y + 1;
     }
-    pipes.forEach(x=> {
-        if (x.x <= -64) {
+    pipes.forEach(p => {
+        if (p.x <= -64) {
             //taking away the gap plus the bird to get 212
             let random = Math.random() * (640 - 212);
-            x.YPositonHigher = random - x.height; // so goes to top
-            x.yPositonLower = random + 188;
-    
-    
-            x.yPositonLower = random + 188;
-            x.x = 424
-            x.passed = false;
+            p.YPositonHigher = random - p.height; // so goes to top
+            p.yPositonLower = random + 188;
+
+
+            p.yPositonLower = random + 188;
+            p.x = 424
+            p.passed = false;
         } else {
-            x.x = x.x - 4   ;
+            p.x = p.x - 4;
         }
-    
+
     })
 
-   
 
 
-  ctx.drawImage(bgImg,0,0)
-pipesDraw()
-birdDraw()
 
-   
+    ctx.drawImage(bgImg, 0, 0)
+    pipesDraw()
+    birdDraw()
+
+//score 
     ctx.fillStyle = "rgb(0, 0, 0)";
     ctx.font = "20px Arial"
     ctx.fillText(score, 10, 30);
-    
 
-    
 
-    if (!gameover) {
-        window.requestAnimationFrame(draw)
+
+    raf = window.requestAnimationFrame(draw);
+    if (gameover) {
+        window.cancelAnimationFrame(raf);
+        
     }
 }
-window.requestAnimationFrame(draw)
+raf = window.requestAnimationFrame(draw)
