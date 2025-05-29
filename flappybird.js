@@ -68,12 +68,21 @@ function gameStart(){
     bird.y = 320;
     bird.width = 34;
     bird.height = 24;
+
 }
 
 addEventListener("keydown", ()=>{
 if(gameover){
     gameover = false;
-    bird.x=45;
+    bird.y=320 ;
+    let random =  Math.random()*(640-212) ;
+    pipeOne.YPositonHigher= random - pipeOne.height; // so goes to top
+    pipeOne.yPositonLower = random + 188;
+score = 0;  
+
+pipeOne.yPositonLower = random + 188;
+     pipeOne.x = 424
+     pipeOne.passed = false; 
     window.requestAnimationFrame(draw)
 
 
