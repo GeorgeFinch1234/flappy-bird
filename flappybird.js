@@ -16,6 +16,12 @@ let gameover = false;
 let score = 0;
     let birdYPositon=320;
 //need as need access to know if hit or not
+//taken from mdn
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+
 let bird = { 
     x : 45,
     y : 320,
@@ -85,7 +91,7 @@ if(a.x < b.x+b.width && a.x + a.width > b.x) {
   
     // so if in position to hit it, now see if in gap or not.
 return a.y < b.yPositonLower - 188 || a.y > b.yPositonLower;
-
+//188 = gap
 
 
 
@@ -123,6 +129,13 @@ if(detectColision(bird,pipeOne)){
     bird.y = bird.y +1;
     }
     if(pipeOne.x <=-64 ){
+        //taking away the gap plus the bird to get 212
+       let random =  Math.random()*(640-212) ;
+       pipeOne.YPositonHigher= random - pipeOne.height; // so goes to top
+       pipeOne.yPositonLower = random + 188;
+
+
+pipeOne.yPositonLower = random + 188;
         pipeOne.x = 424
         pipeOne.passed = false; 
     }else{
