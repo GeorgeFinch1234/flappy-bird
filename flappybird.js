@@ -14,6 +14,7 @@ const bgImg= new Image;
 
     let PipeXpositon = 200;
 
+    let birdYPositon=320;
 
     function pipes(){
 
@@ -22,24 +23,35 @@ const bgImg= new Image;
 
 
     }
+    function bird(){
+        ctx.drawImage(birdImg,45 ,birdYPositon,34,24 )
+        
+    }
+
+
+addEventListener("keydown", ()=>{
+birdYPositon = birdYPositon -
+ 30;
+});
 
 function draw(){
 
     ctx.clearRect(0, 0, 640, 360); // clear canvas
+    birdYPositon = birdYPositon +1;
 
     if(PipeXpositon <=-64 ){
         PipeXpositon = 424
     }else{
     PipeXpositon = PipeXpositon -2;
     }
-    
+  
 
 bgImg.src="./assets/flappybirdbg.png"
 birdImg.src="./assets/flappybird2.png"
 
 ctx.drawImage(bgImg,0,0)
 pipes();
-ctx.drawImage(birdImg,45 ,320,34,24 )
+bird();
 
     window.requestAnimationFrame(draw)
 }
