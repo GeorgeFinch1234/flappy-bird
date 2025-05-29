@@ -12,10 +12,13 @@ const bgImg= new Image;
     const PipeBottomImg = new Image;
     PipeBottomImg.src="./assets/bottompipe.png"  
 
+    let PipeXpositon = 200;
+
+
     function pipes(){
 
-        ctx.drawImage(pipeTopImg,200,-300,64,512);
-        ctx.drawImage(PipeBottomImg,200,400,64,512 )
+        ctx.drawImage(pipeTopImg,PipeXpositon,-300,64,512);
+        ctx.drawImage(PipeBottomImg,PipeXpositon,400,64,512 )
 
 
     }
@@ -23,7 +26,12 @@ const bgImg= new Image;
 function draw(){
 
     ctx.clearRect(0, 0, 640, 360); // clear canvas
-pipes();
+
+    if(PipeXpositon <=-64 ){
+        PipeXpositon = 424
+    }else{
+    PipeXpositon = PipeXpositon -2;
+    }
     
 
 bgImg.src="./assets/flappybirdbg.png"
