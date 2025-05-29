@@ -6,14 +6,14 @@ const canvas = document.getElementById("flappybirdCanvas");
 const ctx = canvas.getContext("2d");
 const bgImg= new Image;
     const birdImg = new Image;
-
+let gameover = false;
     const pipeTopImg = new Image;
     pipeTopImg.src="./assets/toppipe.png"
     const PipeBottomImg = new Image;
     PipeBottomImg.src="./assets/bottompipe.png"  
 
     let PipeXpositon = 200;
-
+let score = 0;
     let birdYPositon=320;
 //need as need access to know if hit or not
 let bird = { 
@@ -27,7 +27,8 @@ let pipeOne = {
     width:64,
     yPositonLower:400,
     YPositonHigher:-300,
-    height:512
+    height:512,
+    passed:false
 }
 let pipetwo = { 
     x:200,
@@ -56,10 +57,22 @@ let pipeThree = {
         ctx.drawImage(birdImg,bird.x ,bird.y,bird.width,bird.height )
         
     }
-
+function gameStart(){
+    bird.x = 45;
+    bird.y = 320;
+    bird.width = 34;
+    bird.height = 24;
+}
 
 addEventListener("keydown", ()=>{
-bird.y = bird.y -
+if(gameover){
+    gameover = false;
+    bird.x=45;
+    window.requestAnimationFrame(draw)
+
+
+}
+    bird.y = bird.y -
  40;
 });
 
@@ -75,7 +88,7 @@ return a.y < b.yPositonLower - 188 || a.y > b.yPositonLower;
 
 
 
-a.y < b.YPositonHigher && a.y+height > b.yPositonLower; // so if below it and above it
+
 }else{
     return false
 }
@@ -88,8 +101,15 @@ a.y < b.YPositonHigher && a.y+height > b.yPositonLower; // so if below it and ab
 function draw(){
 
 
+
+
+    if(bird.x > pipeOne.x+pipeOne.width&&!pipeOne.passed)
+    {
+pipeOne.passed = true
+score = score +1;
+    }
 if(detectColision(bird,pipeOne)){
-    console.log("hit");
+    gameover=true;      
 }
 
     ctx.clearRect(0, 0, 640, 360); // clear canvas
@@ -104,6 +124,7 @@ if(detectColision(bird,pipeOne)){
     }
     if(pipeOne.x <=-64 ){
         pipeOne.x = 424
+        pipeOne.passed = false; 
     }else{
     pipeOne.x = pipeOne.x -2;
     }
@@ -112,10 +133,14 @@ if(detectColision(bird,pipeOne)){
 bgImg.src="./assets/flappybirdbg.png"
 birdImg.src="./assets/flappybird2.png"
 
-ctx.drawImage(bgImg,0,0)
+ctx.drawImage(bgImg,0,0);
+ctx.fillStyle="rgb(0, 0, 0)";
+ctx.font="20px Arial"
+ctx.fillText(score,10,30);
 pipes();
 birdDraw();
-
+if(!gameover){
     window.requestAnimationFrame(draw)
 }
-draw();
+}
+window.requestAnimationFrame(draw)
