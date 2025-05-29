@@ -1,69 +1,70 @@
 
-
-
-
 const canvas = document.getElementById("flappybirdCanvas");
 const ctx = canvas.getContext("2d");
-const bgImg= new Image;
-    const birdImg = new Image;
+
+const bgImg = new Image;
+const birdImg = new Image;
 let gameover = false;
-    const pipeTopImg = new Image;
-    pipeTopImg.src="./assets/toppipe.png"
-    const PipeBottomImg = new Image;
-    PipeBottomImg.src="./assets/bottompipe.png"  
+const pipeTopImg = new Image;
+pipeTopImg.src = "./assets/toppipe.png"
+const PipeBottomImg = new Image;
+PipeBottomImg.src = "./assets/bottompipe.png"
 
-    let PipeXpositon = 200;
+let PipeXpositon = 200;
 let score = 0;
-    let birdYPositon=320;
+let birdYPositon = 320;
+
+
+
+
 //need as need access to know if hit or not
-//taken from mdn
-function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-
-
-let bird = { 
-    x : 45,
-    y : 320,
-    width : 34,
-    height : 24
+let bird = {
+    x: 45,
+    y: 320,
+    width: 34,
+    height: 24
 }
-let pipeOne = { 
-    x:200,
-    width:64,
-    yPositonLower:400,
-    YPositonHigher:-300,
-    height:512,
-    passed:false
-}
-let pipetwo = { 
-    x:200,
-    width:64,
-    yPositonLower:400,
-    YPositonHigher:-300,
-    height:512
-}
-let pipeThree = { 
-
-    x:200,
-    width:64,
-    yPositonLower:400,
-    YPositonHigher:-300,
-    height:512
-}
-
-    function pipes(){
-
-        ctx.drawImage(pipeTopImg,pipeOne.x,pipeOne.YPositonHigher,pipeOne.width,pipeOne.height);
-        ctx.drawImage(PipeBottomImg,pipeOne.x,pipeOne.yPositonLower,pipeOne.width,pipeOne.height );
-
-
-    }
-    function birdDraw(){
-        ctx.drawImage(birdImg,bird.x ,bird.y,bird.width,bird.height )
+class pipe{
+    constructor(){
         
-    }
-function gameStart(){
+   this.x = 200;
+   this.width= 64;
+   this.yPositonLower= 400;
+   this.YPositonHigher= -300;
+   this.height= 512;
+   this.passed= false;
+   this.xIntialPostion;
+}
+}
+const pipes = [new pipe(), new pipe(), new pipe( )]  
+
+pipes[0].xIntialPostion = 200;
+pipes[1].xIntialPostion = 350; 
+pipes[2].xIntialPostion = 500; 
+pipes[0].x = 200;
+pipes[1].x = 350; 
+pipes[2].x = 500;
+
+
+
+ function pipesDraw() {
+    //so they don't all start at same time.
+    
+    pipes.forEach(p=>{
+        
+        ctx.drawImage(pipeTopImg, p.x, p.YPositonHigher, p.width, p.height);
+        ctx.drawImage(PipeBottomImg, p.x, p.yPositonLower, p.width, p.height);
+       
+    })
+  
+
+
+}
+function birdDraw() {
+    ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height)
+
+}
+function gameStart() {
     bird.x = 45;
     bird.y = 320;
     bird.width = 34;
@@ -71,98 +72,121 @@ function gameStart(){
 
 }
 
-addEventListener("keydown", ()=>{
-if(gameover){
-    gameover = false;
-    bird.y=320 ;
-    let random =  Math.random()*(640-212) ;
-    pipeOne.YPositonHigher= random - pipeOne.height; // so goes to top
-    pipeOne.yPositonLower = random + 188;
-score = 0;  
+addEventListener("keydown", () => {
+    if (gameover) {
+        gameover = false; 
+        bird.y = 320;
+        let random = Math.random() * (640 - 212);
+        
+        pipes.forEach(x=> {
+            x.x = x.xIntialPostion; 
+            x.YPositonHigher  = random - x.height;
+            x.yPositonLower = random + 188;
+            x.passed = false;
+        })
+       
+        score = 0;
 
-pipeOne.yPositonLower = random + 188;
-     pipeOne.x = 424
-     pipeOne.passed = false; 
-    window.requestAnimationFrame(draw)
 
 
-}
-    bird.y = bird.y -
- 40;
+        window.requestAnimationFrame(draw)
+
+
+    }
+    //moves bird up
+    bird.y = bird.y - 40;
 });
 
-function detectColision(a, b){
-//so if in front or behind it
+function detectColision(a, b) {
+    //so if in front or behind it
 
-//so knows when in between the pipes
-if(a.x < b.x+b.width && a.x + a.width > b.x) {
-
-  
-    // so if in position to hit it, now see if in gap or not.
-return a.y < b.yPositonLower - 188 || a.y > b.yPositonLower;
-//188 = gap
+    //so knows when in between the pipes
+    if (a.x < b.x + b.width && a.x + a.width > b.x) {
 
 
-
-}else{
-    return false
-}
+        // so if in position to hit it, now see if in gap or not.
+        return a.y < b.yPositonLower - 188 || a.y > b.yPositonLower;
+        //188 = gap
 
 
 
-}
-
-
-function draw(){
-
-
-
-
-    if(bird.x > pipeOne.x+pipeOne.width&&!pipeOne.passed)
-    {
-pipeOne.passed = true
-score = score +1;
+    } else {
+        return false
     }
-if(detectColision(bird,pipeOne)){
-    gameover=true;      
+
+
+
 }
+
+function PointerEvent(a,b){
+    if (a.x > b.x + b.width && !b.passed) {
+        b.passed = true
+        score = score + 1;
+    } 
+
+}
+function draw() {
+  bgImg.src = "./assets/flappybirdbg.png"
+    birdImg.src = "./assets/flappybird2.png"
+
+   
+
+
+   
+
+
+   pipes.forEach(x=>{
+    PointerEvent(bird,x);
+    if (detectColision(bird, x)) {
+        gameover = true;
+    }
+})
+    
 
     ctx.clearRect(0, 0, 640, 360); // clear canvas
 
 
+
+    if (bird.y > 616) {
+
+    } else {
+
+        bird.y = bird.y + 1;
+    }
+    pipes.forEach(x=> {
+        if (x.x <= -64) {
+            //taking away the gap plus the bird to get 212
+            let random = Math.random() * (640 - 212);
+            x.YPositonHigher = random - x.height; // so goes to top
+            x.yPositonLower = random + 188;
+    
+    
+            x.yPositonLower = random + 188;
+            x.x = 424
+            x.passed = false;
+        } else {
+            x.x = x.x - 4   ;
+        }
+    
+    })
+
    
-    if( bird.y>616){
 
-    }else{
 
-    bird.y = bird.y +1;
+  ctx.drawImage(bgImg,0,0)
+pipesDraw()
+birdDraw()
+
+   
+    ctx.fillStyle = "rgb(0, 0, 0)";
+    ctx.font = "20px Arial"
+    ctx.fillText(score, 10, 30);
+    
+
+    
+
+    if (!gameover) {
+        window.requestAnimationFrame(draw)
     }
-    if(pipeOne.x <=-64 ){
-        //taking away the gap plus the bird to get 212
-       let random =  Math.random()*(640-212) ;
-       pipeOne.YPositonHigher= random - pipeOne.height; // so goes to top
-       pipeOne.yPositonLower = random + 188;
-
-
-pipeOne.yPositonLower = random + 188;
-        pipeOne.x = 424
-        pipeOne.passed = false; 
-    }else{
-    pipeOne.x = pipeOne.x -2;
-    }
-  
-
-bgImg.src="./assets/flappybirdbg.png"
-birdImg.src="./assets/flappybird2.png"
-
-ctx.drawImage(bgImg,0,0);
-ctx.fillStyle="rgb(0, 0, 0)";
-ctx.font="20px Arial"
-ctx.fillText(score,10,30);
-pipes();
-birdDraw();
-if(!gameover){
-    window.requestAnimationFrame(draw)
-}
 }
 window.requestAnimationFrame(draw)
