@@ -44,11 +44,11 @@ class pipe {
 const pipes = [new pipe(), new pipe(), new pipe()]
 //so they don't all start at same time.
 pipes[0].xIntialPostion = 200;
-pipes[1].xIntialPostion = 350;
-pipes[2].xIntialPostion = 500;
+pipes[1].xIntialPostion = 380;
+pipes[2].xIntialPostion = 560;
 pipes[0].x = 200;
-pipes[1].x = 350;
-pipes[2].x = 500;
+pipes[1].x = 370;
+pipes[2].x = 540;
 
 
 
@@ -75,6 +75,7 @@ addEventListener("keydown", () => {
         gameover = false;
         // recenter it
         bird.y = 320;
+        //640 = game hight, 212 = pipe gap plus bird height
         let random = Math.random() * (640 - 212);
 
         pipes.forEach(x => {
@@ -90,7 +91,7 @@ addEventListener("keydown", () => {
 
     }
     //moves bird up
-    bird.y = bird.y - 40;
+    bird.y = bird.y - 50;
 });
 
 function detectColision(a, b) {
@@ -135,11 +136,11 @@ function draw() {
 
 
 
-    if (bird.y > 616) {
-
+    if (bird.y > 616 || bird.y < 1   ) {
+        gameover = true
     } else {
 
-        bird.y = bird.y + 1;
+        bird.y = bird.y + 2  ;
     }
     pipes.forEach(p => {
         if (p.x <= -64) {
@@ -153,7 +154,7 @@ function draw() {
             p.x = 424
             p.passed = false;
         } else {
-            p.x = p.x - 4;
+            p.x = p.x - 2 ;
         }
 
     })
